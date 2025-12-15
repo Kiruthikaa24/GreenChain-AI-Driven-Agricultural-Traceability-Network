@@ -14,10 +14,11 @@ AI-Driven Agricultural Traceability Network
 
 
 FarmChainX-AI-Driven-Agricultural-Traceability-Network/
-│
 ├─ frontend/ # React frontend
 └─ backend/ # Spring Boot backend (Eclipse project)
 
+
+---
 
 ## ⚙️ Tech Stack
 
@@ -27,7 +28,8 @@ FarmChainX-AI-Driven-Agricultural-Traceability-Network/
 - **Tools:** Eclipse IDE, Node.js, npm, Git  
 
 ---
-## ⚙️ Features
+
+## 🛠️ Features
 
 ### Farmer Module
 - Add farm details and produce information  
@@ -49,72 +51,73 @@ FarmChainX-AI-Driven-Agricultural-Traceability-Network/
 - Monitor transactions and traceability reports  
 - Generate analytics dashboards  
 
-🚀 Usage
+---
 
-Access frontend: http://localhost:3000
+## 🚀 Usage
 
-Access backend API: http://localhost:8082
+- Access frontend: [http://localhost:3000](http://localhost:3000)  
+- Access backend API: [http://localhost:8082](http://localhost:8082)  
 
-Login as Farmer, Distributor, or Admin
+**Instructions:**  
+- Login as Farmer, Distributor, or Admin  
+- Perform CRUD operations on crops, orders, and inventory  
+- Trace product origins using unique IDs  
 
-Perform CRUD operations on crops, orders, and inventory
-
-Trace product origins using unique IDs
+---
 
 ## 🚀 Getting Started
 
 ### Frontend (React)
 
 1. Open terminal in the `frontend` folder:
-
 ```bash
-<<<<<<< HEAD
-
-=======
 cd frontend
->>>>>>> 8c690be (Updated UI)
+
+
 Install dependencies:
 
-"""
 npm install
+
+
 Start the development server:
-""
+
 npm start
-Open http://localhost:3000 in your browser.
+
+
+Open in browser:
+
+http://localhost:3000
 
 Backend (Spring Boot / Eclipse)
-Open Eclipse IDE and import the backend folder as an existing Maven project.
+
+Open Eclipse IDE and import the backend folder as an Existing Maven Project.
 
 Configure MySQL database in application.properties:
-
-properties
 
 spring.datasource.url=jdbc:mysql://localhost:3307/farmxchain
 spring.datasource.username=root
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
-Create the database:
+
+
+Create the database in MySQL:
 
 CREATE DATABASE farmxchain;
-Run FarmxchainAuthApplication.java as a Java Application. The backend will start on http://localhost:8082.
+
+
+Run FarmxchainAuthApplication.java as a Java Application.
+The backend will start at:
+
+http://localhost:8082
 
 🔄 Running the Full Application
+
 Start MySQL.
 
 Run the backend in Eclipse.
 
 Run the frontend (npm start).
 
-Access the app at http://localhost:3000.
+Access the app at http://localhost:3000
+
 The frontend communicates with backend APIs at http://localhost:8082.
-
-
-
-💡 Notes
-Ensure ports 3000 (frontend) and 8082 (backend) are free.
-
-<<<<<<< HEAD
-The backend must be running for the frontend features to work properly.
-=======
-The backend must be running for the frontend features to work properly.
->>>>>>> 8c690be (Updated UI)
