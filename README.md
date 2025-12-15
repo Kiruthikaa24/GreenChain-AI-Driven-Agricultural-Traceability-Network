@@ -53,7 +53,7 @@ FarmChainX-AI-Driven-Agricultural-Traceability-Network/
 
 Access frontend: http://localhost:3000
 
-Access backend API: http://localhost:8080
+Access backend API: http://localhost:8082
 
 Login as Farmer, Distributor, or Admin
 
