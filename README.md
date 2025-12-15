@@ -1,27 +1,23 @@
-# 🌾 FarmChainX - AI-Driven Agricultural Traceability Network
+# GreenChain
 
-![Frontend](https://img.shields.io/badge/Frontend-React-blue)
-![Backend](https://img.shields.io/badge/Backend-SpringBoot-brightgreen)
-![Database](https://img.shields.io/badge/Database-MySQL-orange)
-
-FarmChainX is a full-stack platform for **tracking agricultural produce** with AI-based tools. It enables farmers, distributors, and consumers to monitor the journey of agricultural products, ensuring **transparency and traceability** in the supply chain.
+AI-Driven Agricultural Traceability Network
 
 ---
 
-## 📂 Project Structure
+## 📌 Project Overview
+
+**GreenChain** is a full-stack application that leverages **AI and cloud technologies** to provide an end-to-end **agricultural traceability system**. It enables farmers, distributors, and consumers to track the journey of agricultural products from farm to fork, ensuring **transparency, accountability, and quality assurance**.  
+
+---
+
+## 🏗️ Project Structure
+
 
 FarmChainX-AI-Driven-Agricultural-Traceability-Network/
 │
 ├─ frontend/ # React frontend
 └─ backend/ # Spring Boot backend (Eclipse project)
 
-<<<<<<< HEAD
-=======
-yaml
-Copy code
-
->>>>>>> 8c690be (Updated UI)
----
 
 ## ⚙️ Tech Stack
 
@@ -31,6 +27,39 @@ Copy code
 - **Tools:** Eclipse IDE, Node.js, npm, Git  
 
 ---
+## ⚙️ Features
+
+### Farmer Module
+- Add farm details and produce information  
+- Upload images of crops  
+- Track crop growth stages using AI insights  
+
+### Distributor Module
+- View available produce from farmers  
+- Verify crop authenticity and quality  
+- Manage inventory and orders  
+
+### Consumer Module
+- Trace the origin of purchased produce  
+- Access crop history and AI-generated quality reports  
+- Rate and review products  
+
+### Admin Module
+- Manage users (farmers, distributors, consumers)  
+- Monitor transactions and traceability reports  
+- Generate analytics dashboards  
+
+🚀 Usage
+
+Access frontend: http://localhost:3000
+
+Access backend API: http://localhost:8080
+
+Login as Farmer, Distributor, or Admin
+
+Perform CRUD operations on crops, orders, and inventory
+
+Trace product origins using unique IDs
 
 ## 🚀 Getting Started
 
