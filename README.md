@@ -14,8 +14,10 @@ AI-Driven Agricultural Traceability Network
 
 
 FarmChainX-AI-Driven-Agricultural-Traceability-Network/
-├─ frontend/ # React frontend
-└─ backend/ # Spring Boot backend (Eclipse project)
+├─ frontend/
+# React frontend
+└─ backend/ 
+# Spring Boot backend (Eclipse project)
 
 
 ---
@@ -39,7 +41,12 @@ FarmChainX-AI-Driven-Agricultural-Traceability-Network/
 ### Distributor Module
 - View available produce from farmers  
 - Verify crop authenticity and quality  
-- Manage inventory and orders  
+- Manage inventory and orders
+
+### Retailer Module
+- Browse products
+- Place bulk orders
+- Manage customer orders
 
 ### Consumer Module
 - Trace the origin of purchased produce  
