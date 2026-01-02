@@ -3,7 +3,7 @@
   max-width: 600px;
   margin: 40px auto;
   padding: 30px;
-  background: white;
+  background: rgb(13, 192, 28);
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
@@ -34,7 +34,7 @@
 
 .edit-form input {
   padding: 14px;
-  border: 2px solid #e1e5e9;
+  border: 2px solid #3bbb10;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -58,7 +58,7 @@
 
 .edit-form input[type="file"]:hover {
   border-color: #4a90e2;
-  background-color: #f0f7ff;
+  background-color: #96e713;
 }
 
 /* Buttons */
@@ -72,7 +72,7 @@
 .update-btn {
   padding: 14px 28px;
   background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  color: white;
+  color: rgb(159, 191, 17);
   border: none;
   border-radius: 8px;
   cursor: pointer;

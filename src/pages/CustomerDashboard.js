@@ -1,19 +1,14 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { analyzeImageWithAI } from "../services/aiService.js";
 import "../styles/customer.css"; 
 
 // --- MOCK NAVIGATION & AUTH ---
-
 const useNavigate = () => {
   return (path) => {
     console.log(`Navigating to: ${path}`);
-    // For demonstration - in a real app, this would use react-router's navigate
-    // Since this is a mock, we'll just log and optionally reload to simulate navigation
     if (path === "/login") {
-      // Simulate navigation by reloading (for demo purposes)
       setTimeout(() => {
-        window.location.href = "/login"; // or window.location.reload() for demo
+        window.location.href = "/login";
       }, 100);
     }
   };
@@ -22,15 +17,13 @@ const useNavigate = () => {
 const logoutUser = () => {
   console.log("Logout initiated: localStorage user cleared.");
   localStorage.removeItem("user");
-  localStorage.removeItem("customerOrders"); // Also clear customer orders for clean state
+  localStorage.removeItem("customerOrders");
 };
-// --- UTILITY DATA ---
 
-// Placeholder URL generator for product images
+// --- UTILITY DATA ---
 const getPlaceholderUrl = (text) => 
     `https://placehold.co/250x180/4a90e2/ffffff?text=${text.replace(/\s/g, '+')}`;
 
-// Updated Sample Products
 const SAMPLE_PRODUCTS = [
   { id: 1, name: "Organic Wheat", price: 25, image: getPlaceholderUrl("Organic+Wheat"), description: "High-quality, organic durum wheat, perfect for baking." },
   { id: 2, name: "Fresh Rice", price: 30, image: getPlaceholderUrl("Fresh+Rice"), description: "Premium long-grain white rice, ready for cooking." },
@@ -49,7 +42,6 @@ const SAMPLE_PRODUCTS = [
   { id: 15, name: "Onions", price: 20, image: getPlaceholderUrl("Onions"), description: "Fresh onions, perfect for cooking." },
 ];
 
-// Updated Crop Options
 const CROP_OPTIONS = [
   { value: "wheat", label: "Wheat" },
   { value: "rice", label: "Rice" },
@@ -68,14 +60,11 @@ const CROP_OPTIONS = [
   { value: "onion", label: "Onion" },
 ];
 
-
-// --- CUSTOM NOTIFICATION COMPONENT (Replaces alert) ---
+// --- NOTIFICATION COMPONENT ---
 const Notification = ({ message, type, onClose }) => {
     if (!message) return null;
-
     const baseClass = "notification";
     const typeClass = type === 'success' ? 'notification-success' : 'notification-error';
-
     return (
         <div className={`${baseClass} ${typeClass}`}>
             <span>{message}</span>
@@ -83,7 +72,6 @@ const Notification = ({ message, type, onClose }) => {
         </div>
     );
 };
-
 
 // --- MAIN COMPONENT ---
 const CustomerDashboard = () => {
@@ -93,29 +81,41 @@ const CustomerDashboard = () => {
   const [user, setUser] = useState({});
   const [activeTab, setActiveTab] = useState("products");
   const [cartItems, setCartItems] = useState([]);
+  const [wishlist, setWishlist] = useState(() => JSON.parse(localStorage.getItem('wishlist')) || []);
   const [orders, setOrders] = useState([]);
-
-  // AI Analysis
+  const [reviews, setReviews] = useState({});
+  const [reviewInputs, setReviewInputs] = useState({});
   const [selectedCrop, setSelectedCrop] = useState("wheat");
   const [selectedFile, setSelectedFile] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null); 
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
-  
-  // Notification
   const [notification, setNotification] = useState({ message: '', type: '' });
 
-
-  // --- LIFECYCLE: Load User and Orders ---
+  // --- LIFECYCLE: Load User, Orders, Reviews, Wishlist ---
   useEffect(() => {
-    // Mock user load
     const storedUser = JSON.parse(localStorage.getItem("user")) || { name: "Sandeep", role: "Customer" };
     setUser(storedUser);
-    
-    // Mock order load
+
     const storedOrders = JSON.parse(localStorage.getItem("customerOrders") || "[]");
     setOrders(storedOrders);
 
+    const storedReviews = JSON.parse(localStorage.getItem("productReviews") || "{}");
+    setReviews(storedReviews);
+
+    const storedInputs = JSON.parse(localStorage.getItem("reviewInputs") || "{}");
+    setReviewInputs(storedInputs);
   }, []);
+
+  // Persist reviews & temp inputs
+  useEffect(() => {
+    localStorage.setItem("productReviews", JSON.stringify(reviews));
+  }, [reviews]);
+  useEffect(() => {
+    localStorage.setItem("reviewInputs", JSON.stringify(reviewInputs));
+  }, [reviewInputs]);
+  useEffect(() => {
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
 
   // --- HANDLERS ---
   const handleLogout = useCallback(() => {
@@ -162,7 +162,6 @@ const CustomerDashboard = () => {
         items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))
     };
     
-    // Save to local storage for persistence
     const updatedOrders = [newOrder, ...orders];
     setOrders(updatedOrders);
     localStorage.setItem("customerOrders", JSON.stringify(updatedOrders));
@@ -172,6 +171,7 @@ const CustomerDashboard = () => {
     setActiveTab("orders");
   };
 
+  // --- AI IMAGE HANDLER ---
   const handleImageUpload = async () => {
     closeNotification();
     if (!selectedFile || !selectedCrop) {
@@ -186,7 +186,6 @@ const CustomerDashboard = () => {
       const result = await analyzeImageWithAI(selectedCrop, selectedFile);
       setAnalysisResult(result);
       setNotification({ message: "AI analysis complete.", type: 'success' });
-
     } catch (error) {
       console.error("Image analysis failed:", error);
       setNotification({ message: "AI analysis failed. Try again later.", type: 'error' });
@@ -202,6 +201,46 @@ const CustomerDashboard = () => {
     }
   };
 
+  // --- REVIEW HANDLERS ---
+  const handleReviewInputChange = (productId, field, value) => {
+    setReviewInputs(prev => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleAddReview = (productId) => {
+    const input = reviewInputs[productId];
+    if (!input?.comment || !input?.rating) {
+      setNotification({ message: "Please enter both comment and rating.", type: 'error' });
+      return;
+    }
+
+    setReviews(prev => ({
+      ...prev,
+      [productId]: [...(prev[productId] || []), { rating: input.rating, comment: input.comment, user: user.name }]
+    }));
+
+    setReviewInputs(prev => ({ ...prev, [productId]: { comment: '', rating: 5 } }));
+    setNotification({ message: "Review submitted!", type: 'success' });
+  };
+
+  // --- WISHLIST HANDLER ---
+  const toggleWishlist = (product) => {
+    let updatedWishlist;
+    if (wishlist.find(item => item.id === product.id)) {
+      updatedWishlist = wishlist.filter(item => item.id !== product.id);
+      setNotification({ message: `${product.name} removed from wishlist.`, type: 'error' });
+    } else {
+      updatedWishlist = [...wishlist, product];
+      setNotification({ message: `${product.name} added to wishlist!`, type: 'success' });
+    }
+    setWishlist(updatedWishlist);
+  };
+
   // --- RENDER ---
   return (
     <div className="dashboard-container">
@@ -212,195 +251,203 @@ const CustomerDashboard = () => {
         <div className="header-info">
             <p className="welcome-text">Welcome, <span className="user-name">{user.name || "Customer"}</span></p>
             <button onClick={handleLogout} className="btn-logout">
-                <svg xmlns="http://www.w3.org/2000/svg" className="icon-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="icon-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
                 Logout
             </button>
         </div>
       </header>
-      
+
       {/* Tabs */}
       <div className="tabs-container">
-        <button 
-            className={`tab-btn ${activeTab === "products" ? "active" : ""}`} 
-            onClick={() => setActiveTab("products")}
-        >
-            Products
-        </button>
-        <button 
-            className={`tab-btn ${activeTab === "orders" ? "active" : ""}`} 
-            onClick={() => setActiveTab("orders")}
-        >
-            Orders
-        </button>
-        <button 
-            className={`tab-btn ${activeTab === "cart" ? "active" : ""}`} 
-            onClick={() => setActiveTab("cart")}
-        >
-            Cart ({cartItems.length})
-        </button>
-        <button 
-            className={`tab-btn ${activeTab === "ai" ? "active" : ""}`} 
-            onClick={() => setActiveTab("ai")}
-        >
-            AI Quality Check
-        </button>
+        <button className={`tab-btn ${activeTab === "products" ? "active" : ""}`} onClick={() => setActiveTab("products")}>Products</button>
+        <button className={`tab-btn ${activeTab === "orders" ? "active" : ""}`} onClick={() => setActiveTab("orders")}>Orders</button>
+        <button className={`tab-btn ${activeTab === "cart" ? "active" : ""}`} onClick={() => setActiveTab("cart")}>Cart ({cartItems.length})</button>
+        <button className={`tab-btn ${activeTab === "ai" ? "active" : ""}`} onClick={() => setActiveTab("ai")}>AI Quality Check</button>
+        <button className={`tab-btn ${activeTab === "wishlist" ? "active" : ""}`} onClick={() => setActiveTab("wishlist")}>Wishlist ({wishlist.length})</button>
       </div>
 
       <main className="content-area">
-          {/* Products Tab */}
-          {activeTab === "products" && (
-            <div className="product-grid">
-              <h2>Browse Fresh Produce</h2>
-              {SAMPLE_PRODUCTS.map((p) => (
-                <div className="product-card" key={p.id}>
-                  <img src={p.image} alt={p.name} onError={(e) => {e.target.onerror = null; e.target.src=getPlaceholderUrl(p.name)}}/>
-                  <div className="card-content">
-                      <h3>{p.name}</h3>
-                      <p className="description">{p.description}</p>
-                      <div className="price-and-action">
-                          <p className="price">₹{p.price}<span className="unit">/kg</span></p>
-                          <button onClick={() => handleAddToCart(p)} className="btn-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.08a2 2 0 0 0 2 1.92h9.24a2 2 0 0 0 2-1.92L23 6H6"></path></svg>
-                            Add to Cart
-                          </button>
+
+        {/* PRODUCTS TAB */}
+        {activeTab === "products" && (
+          <div className="product-grid">
+            <h2>Browse Fresh Produce</h2>
+            {SAMPLE_PRODUCTS.map((p) => (
+              <div className="product-card" key={p.id}>
+                <img src={p.image} alt={p.name} onError={(e) => {e.target.onerror=null; e.target.src=getPlaceholderUrl(p.name)}}/>
+                <div className="card-content">
+                    <h3>{p.name}</h3>
+                    <p className="description">{p.description}</p>
+                    <div className="price-and-action">
+                        <p className="price">₹{p.price}<span className="unit">/kg</span></p>
+                        <button onClick={() => handleAddToCart(p)} className="btn-primary">Add to Cart</button>
+                        <span 
+                          className={`wishlist-icon ${wishlist.find(item => item.id === p.id) ? 'active' : ''}`}
+                          onClick={() => toggleWishlist(p)}
+                        >❤️</span>
+                    </div>
+
+                    {/* REVIEWS */}
+                    <div className="reviews-section">
+                      <h4>Reviews:</h4>
+                      {(reviews[p.id] || []).length === 0 ? (
+                        <p>No reviews yet. Be the first to review!</p>
+                      ) : (
+                        (reviews[p.id] || []).map((rev, idx) => (
+                          <div key={idx} className="review">
+                            <strong>{rev.user}:</strong> {rev.comment} ({rev.rating}⭐)
+                          </div>
+                        ))
+                      )}
+
+                      <div className="add-review">
+                        <input
+                          type="text"
+                          placeholder="Write a review"
+                          value={reviewInputs[p.id]?.comment || ""}
+                          onChange={(e) => handleReviewInputChange(p.id, "comment", e.target.value)}
+                          className="input-comment"
+                        />
+                        <select
+                          value={reviewInputs[p.id]?.rating || 5}
+                          onChange={(e) => handleReviewInputChange(p.id, "rating", Number(e.target.value))}
+                          className="input-rating"
+                        >
+                          {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+                        </select>
+                        <button onClick={() => handleAddReview(p.id)} className="btn-submit-review">Submit</button>
                       </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Orders Tab */}
-          {activeTab === "orders" && (
-            <div className="orders-section">
-              <h2>Your Order History</h2>
-              {orders.length === 0 ? (
-                <p className="empty-state">You haven't placed any orders yet. Start shopping!</p>
-              ) : (
-                orders.map((order) => (
-                  <div key={order.id} className="order-card">
-                    <div className="order-header">
-                        <span className="order-id">Order ID: {order.id}</span>
-                        <span className={`order-status status-${order.status.toLowerCase()}`}>{order.status}</span>
                     </div>
-                    <p className="order-date">Date: {order.date}</p>
-                    <ul className="order-items-list">
-                      {order.items.map((item, index) => (
-                        <li key={index}>
-                          {item.name} × {item.quantity} 
-                          <span className="item-price-small">₹{(item.price * item.quantity).toFixed(2)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="order-total">Total: <strong>₹{order.total.toFixed(2)}</strong></p>
+
                   </div>
-                ))
-              )}
-            </div>
-          )}
-
-          {/* Cart Tab */}
-          {activeTab === "cart" && (
-            <div className="cart-section">
-                <h2>Your Shopping Cart</h2>
-              {cartItems.length === 0 ? (
-                <p className="empty-state">Your cart is empty.</p>
-              ) : (
-                <div className="cart-layout">
-                    <div className="cart-items-list">
-                        {cartItems.map((item) => (
-                            <div key={item.id} className="cart-item">
-                                <span className="item-details">{item.name} × {item.quantity}</span>
-                                <span className="item-total">₹{(item.price * item.quantity).toFixed(2)}</span>
-                                <button onClick={() => handleRemoveFromCart(item.id)} className="btn-remove">
-                                    Remove
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="cart-summary-card">
-                        <h3>Order Summary</h3>
-                        <div className="summary-row">
-                            <span>Subtotal:</span>
-                            <strong>₹{calculateTotal().toFixed(2)}</strong>
-                        </div>
-                        <div className="summary-row total-row">
-                            <span>Total:</span>
-                            <strong>₹{calculateTotal().toFixed(2)}</strong>
-                        </div>
-                        <button onClick={handleCheckout} className="btn-checkout">
-                            Proceed to Checkout
-                        </button>
-                    </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* AI Quality Check Tab */}
-          {activeTab === "ai" && (
-            <div className="ai-section">
-              <h2>AI Crop Quality Analysis</h2>
-              <div className="ai-card">
-                  <p className="ai-description">Upload an image of your crop (e.g., wheat, rice) to get an instant quality assessment.</p>
-                  
-                  <div className="input-group">
-                      <label htmlFor="crop-select">Select Crop Type:</label>
-                      <select id="crop-select" value={selectedCrop} onChange={(e) => setSelectedCrop(e.target.value)} className="input-select">
-                        {CROP_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                  </div>
-                  
-                  <div className="input-group">
-                      <label htmlFor="file-input">Upload Image:</label>
-                      <input 
-                        id="file-input"
-                        type="file" 
-                        accept="image/*" 
-                        onChange={(e) => setSelectedFile(e.target.files[0])} 
-                        className="input-file"
-                      />
-                  </div>
-
-                  {selectedFile && (
-                      <div className="image-preview-container">
-                          <img 
-                            src={URL.createObjectURL(selectedFile)} 
-                            alt="Crop Preview" 
-                            className="image-preview"
-                          />
-                          <p className="file-name">{selectedFile.name}</p>
-                      </div>
-                  )}
-
-                  <button onClick={handleImageUpload} disabled={loadingAnalysis || !selectedFile} className="btn-predict">
-                    {loadingAnalysis ? (
-                        <>
-                            <span className="spinner"></span> Analyzing...
-                        </>
-                    ) : (
-                        "Upload & Predict Quality"
-                    )}
-                  </button>
-
-                  {analysisResult && (
-                    <div className={`analysis-result-box result-${analysisResult.overallQuality?.toLowerCase() || 'fail'}`}>
-                        <h3>{analysisResult.productName || 'Analysis Result'}</h3>
-                        <p><strong>Freshness:</strong> <span className={`status-${analysisResult.freshnessStatus?.toLowerCase()}`}>{analysisResult.freshnessStatus || 'N/A'}</span></p>
-                        <p><strong>Quality Grade:</strong> <span className="quality-grade">{analysisResult.overallQuality || 'N/A'}</span></p>
-                        <p><strong>Confidence:</strong> {((analysisResult.confidence || 0) * 100).toFixed(1)}%</p>
-                        <p className="justification">
-                            <strong>Justification:</strong> {analysisResult.justification || 'No justification provided.'}
-                        </p>
-                    </div>
-                  )}
               </div>
+            ))}
+          </div>
+        )}
+
+        {/* ORDERS TAB */}
+        {activeTab === "orders" && (
+          <div className="orders-section">
+            <h2>Your Order History</h2>
+            {orders.length === 0 ? (
+              <p className="empty-state">You haven't placed any orders yet. Start shopping!</p>
+            ) : (
+              orders.map((order) => (
+                <div key={order.id} className="order-card">
+                  <div className="order-header">
+                      <span className="order-id">Order ID: {order.id}</span>
+                      <span className={`order-status status-${order.status.toLowerCase()}`}>{order.status}</span>
+                  </div>
+                  <p className="order-date">Date: {order.date}</p>
+                  <ul className="order-items-list">
+                    {order.items.map((item, index) => (
+                      <li key={index}>
+                        {item.name} × {item.quantity} 
+                        <span className="item-price-small">₹{(item.price * item.quantity).toFixed(2)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="order-total">Total: <strong>₹{order.total.toFixed(2)}</strong></p>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* CART TAB */}
+        {activeTab === "cart" && (
+          <div className="cart-section">
+              <h2>Your Shopping Cart</h2>
+            {cartItems.length === 0 ? (
+              <p className="empty-state">Your cart is empty.</p>
+            ) : (
+              <div className="cart-layout">
+                  <div className="cart-items-list">
+                      {cartItems.map((item) => (
+                          <div key={item.id} className="cart-item">
+                              <span className="item-details">{item.name} × {item.quantity}</span>
+                              <span className="item-total">₹{(item.price * item.quantity).toFixed(2)}</span>
+                              <button onClick={() => handleRemoveFromCart(item.id)} className="btn-remove">Remove</button>
+                          </div>
+                      ))}
+                  </div>
+                  <div className="cart-summary-card">
+                      <h3>Order Summary</h3>
+                      <div className="summary-row">
+                          <span>Subtotal:</span>
+                          <strong>₹{calculateTotal().toFixed(2)}</strong>
+                      </div>
+                      <div className="summary-row total-row">
+                          <span>Total:</span>
+                          <strong>₹{calculateTotal().toFixed(2)}</strong>
+                      </div>
+                      <button onClick={handleCheckout} className="btn-checkout">Proceed to Checkout</button>
+                  </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* AI TAB */}
+        {activeTab === "ai" && (
+          <div className="ai-section">
+            <h2>AI-Based Crop Quality Check</h2>
+            <div className="ai-upload-section">
+              <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} />
+              <select value={selectedCrop} onChange={(e) => setSelectedCrop(e.target.value)}>
+                {CROP_OPTIONS.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+              <button onClick={handleImageUpload} disabled={loadingAnalysis}>
+                {loadingAnalysis ? "Analyzing..." : "Analyze Image"}
+              </button>
             </div>
-          )}
+
+            {analysisResult && (
+              <div className="ai-result-card">
+                <h3>{analysisResult.productName}</h3>
+                <p><strong>Freshness Status:</strong> {analysisResult.freshnessStatus}</p>
+                <p><strong>Overall Quality:</strong> {analysisResult.overallQuality}</p>
+                <p><strong>Confidence:</strong> {(analysisResult.confidence*100).toFixed(2)}%</p>
+                <p><strong>Justification:</strong> {analysisResult.justification}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* WISHLIST TAB */}
+        {activeTab === "wishlist" && (
+          <div className="product-grid">
+            <h2>Your Wishlist</h2>
+            {wishlist.length === 0 ? (
+              <p className="empty-state">Your wishlist is empty!</p>
+            ) : (
+              wishlist.map((p) => (
+                <div className="product-card" key={p.id}>
+                  <img src={p.image} alt={p.name} onError={(e) => {e.target.onerror=null; e.target.src=getPlaceholderUrl(p.name)}}/>
+                  <div className="card-content">
+                    <h3>{p.name}</h3>
+                    <p className="description">{p.description}</p>
+                    <div className="price-and-action">
+                      <p className="price">₹{p.price}<span className="unit">/kg</span></p>
+                      <button onClick={() => handleAddToCart(p)} className="btn-primary">Add to Cart</button>
+                      <span 
+                        className="wishlist-icon active"
+                        onClick={() => toggleWishlist(p)}
+                      >❤️</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
       </main>
     </div>
   );

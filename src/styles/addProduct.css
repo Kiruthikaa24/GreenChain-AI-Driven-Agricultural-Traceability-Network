@@ -3,7 +3,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: #ffffff;
+  background: #240aeb;
   color: #000000;
   overflow-x: hidden;
 }
@@ -22,23 +22,23 @@ body {
 
 /* Add Product Button */
 .add-btn {
-  background: #d28484;
-  color: white;
+  background: #6bd179;
+  color: rgb(49, 206, 18);
 }
 
 .add-btn:hover {
-  background: #b06a6a;
+  background: #92b06a;
   transform: translateY(-1px);
 }
 
 /* Logout Button */
 .logout-btn {
-  background: #308e9d;
+  background: #6dc258;
   color: white;
 }
 
 .logout-btn:hover {
-  background: #2a7e8c;
+  background: #0d2bb1;
   transform: translateY(-1px);
 }
 
@@ -86,15 +86,15 @@ h2,p{
 
 .products-table th,
 .products-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #28ead0;
   padding: 12px;
   text-align: center;
   white-space: nowrap;
 }
 
 .products-table th {
-  background: #007bff;
-  color: white;
+  background: #3bb827;
+  color: rgb(120, 150, 21);
   text-transform: uppercase;
   font-size: 0.9rem;
 }
@@ -111,7 +111,7 @@ h2,p{
   max-width: 500px;
   margin: auto;
   padding: 20px;
-  background: white;
+  background: rgb(82, 222, 22);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   margin-top: 40px;
@@ -146,8 +146,8 @@ h2,p{
 
 .submit-btn {
   padding: 10px 18px;
-  background: #28a745;
-  color: white;
+  background: #0cd33b;
+  color: rgb(148, 227, 75);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -160,7 +160,7 @@ h2,p{
 
 .back-btn {
   padding: 10px 18px;
-  background: #6c757d;
+  background: #47f013;
   color: white;
   border: none;
   border-radius: 8px;
@@ -169,12 +169,12 @@ h2,p{
 }
 
 .back-btn:hover {
-  background: #5a6268;
+  background: #6bf20b;
 }
 
 /* Error styles */
 .error {
-  border: 2px solid #e74c3c !important;
+  border: 2px solid #245811 !important;
 }
 
 .error-text {
@@ -273,7 +273,7 @@ h2,p{
 }
 
 .add-form input:focus {
-  border-color: #4a90e2;
+  border-color: #42bc19;
   outline: none;
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
@@ -281,13 +281,13 @@ h2,p{
 .add-form input[type="file"] {
   padding: 10px;
   border: 2px dashed #ccc;
-  background-color: #f9f9f9;
+  background-color: #70c713;
   text-align: center;
   cursor: pointer;
 }
 
 .add-form input[type="file"]:hover {
-  border-color: #4a90e2;
+  border-color: #54bf1f;
   background-color: #f0f7ff;
 }
 
@@ -300,8 +300,8 @@ h2,p{
 
 .submit-btn {
   padding: 14px 28px;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+  background: linear-gradient(135deg, #9bdd0e 0%, #20c997 100%);
+  color: rgb(21, 207, 27);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -320,7 +320,7 @@ h2,p{
 .back-btn {
   padding: 14px 28px;
   background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-  color: white;
+  color: rgb(149, 217, 12);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -334,7 +334,7 @@ h2,p{
 }
 
 .back-btn:hover {
-  background: linear-gradient(135deg, #5a6268 0%, #3d4348 100%);
+  background: linear-gradient(135deg, #5bda0d 0%, #3d4348 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

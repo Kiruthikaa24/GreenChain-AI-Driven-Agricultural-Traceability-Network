@@ -2,21 +2,21 @@
 
 :root {
   /* Color Palette - Professional & Fresh */
-  --color-primary: #4361ee;
-  --color-primary-light: #4895ef;
-  --color-primary-dark: #3a0ca3;
-  --color-secondary: #f72585;
-  --color-success: #4cc9f0;
-  --color-warning: #f8961e;
-  --color-error: #e63946;
+  --color-primary: #7dcf30;
+  --color-primary-light: #f60be6;
+  --color-primary-dark: #7647e1;
+  --color-secondary: #ab0b0b8d;
+  --color-success: #1bc61b;
+  --color-warning: #05ff3f;
+  --color-error: #920d18;
 
   /* Neutral Colors */
-  --color-bg: #f8f9fa;
-  --color-bg-card: #ffffff;
+  --color-bg: #06e406;
+  --color-bg-card: #48f305b0;
   --color-text: #212529;
   --color-text-light: #6c757d;
-  --color-border: #dee2e6;
-  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-border: #85f702;
+  --color-shadow: rgba(13, 238, 178, 0.736);
 
   /* Typography */
   --font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -51,12 +51,12 @@
 
 /* Dark Mode Variables */
 [data-theme="dark"] {
-  --color-bg: #121212;
-  --color-bg-card: #1e1e1e;
-  --color-text: #e9ecef;
+  --color-bg: #ba1515;
+  --color-bg-card: #c61b1b;
+  --color-text: #1187fd;
   --color-text-light: #adb5bd;
   --color-border: #495057;
-  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-shadow: rgba(139, 15, 15, 0.3);
 }
 
 /* Base Reset & Typography */
@@ -301,7 +301,7 @@ body {
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background: var(--color-primary);
-  color: white;
+  color: rgb(24, 212, 46);
   border: none;
   border-radius: var(--radius-base);
   font-weight: 500;
@@ -690,7 +690,96 @@ body {
 
 .notification-close:hover {
   background: rgba(255, 255, 255, 0.2);
+} 
+
+/* review section */
+/* ==================== REVIEWS SECTION ==================== */
+.reviews-section {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
 }
+
+.reviews-section h4 {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-3);
+  color: var(--color-primary-dark);
+}
+
+.review {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review strong {
+  color: var(--color-primary);
+  margin-right: var(--space-2);
+}
+
+.add-review {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.input-comment {
+  flex: 2;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-base);
+}
+
+.input-rating {
+  flex: 0 0 80px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+.btn-submit-review {
+  flex: 0 0 100px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-base);
+  padding: var(--space-2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.btn-submit-review:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+ 
+/*wishlist */
+.wishlist-icon {
+  cursor: pointer;
+  font-size: 1.25rem;
+  margin-left: 10px;
+  transition: transform 0.2s;
+}
+
+.wishlist-icon:hover {
+  transform: scale(1.2);
+}
+
+.wishlist-icon.active {
+  color: red;
+}
+
 
 /* ==================== EMPTY STATES ==================== */
 .empty-state {

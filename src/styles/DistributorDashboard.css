@@ -4,13 +4,13 @@
 .distributor-dashboard {
     font-family: 'Inter', sans-serif; 
     padding: 30px;
-    background: linear-gradient(to right, #e0f2fe, #fef3c7);
+    background: linear-gradient(to right, #55dc1c, #ecfec7);
     min-height: 100vh;
 }
 
 h1 {
-    color: #1e3a8a;
-    border-bottom: 2px solid #e0e7ff;
+    color: #ab1adf;
+    border-bottom: 2px solid #1f69d1;
     padding-bottom: 10px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -43,7 +43,7 @@ p {
 }
 
 .dashboard-title p {
-    color: #6b7280;
+    color: #128a62;
     font-size: 0.95rem;
 }
 
@@ -89,7 +89,7 @@ p {
 }
 
 .tabs button.active {
-    color: #1e3a8a;
+    color: #1e408a;
     border-bottom: 2px solid #1e3a8a;
     font-weight: 600;
 }
@@ -129,7 +129,7 @@ p {
 }
 
 .orders-table tr:hover, .inventory-table tr:hover {
-    background-color: #f1f5f9;
+    background-color: #d61919be;
 }
 
 .orders-table ul {
@@ -175,7 +175,7 @@ p {
    5. ACTION BUTTONS
    ========================================================= */
 .btn-action {
-    background: linear-gradient(90deg, #4f46e5, #6366f1);
+    background: linear-gradient(90deg, #a5e546, #aff163);
     color: white;
     border: none;
     padding: 8px 12px;
@@ -201,7 +201,7 @@ p {
 }
 
 .stat-card {
-    background: #ffffff;
+    background: #08d43e;
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);

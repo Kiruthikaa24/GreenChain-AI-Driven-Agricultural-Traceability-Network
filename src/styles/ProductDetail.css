@@ -4,7 +4,7 @@
 .product-detail {
   padding: 20px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #4facfe, #00f2fe); /* elegant aqua-blue gradient */
+  background: linear-gradient(135deg, #66d511, #295b11); /* elegant aqua-blue gradient */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +15,7 @@
    Product Card
 ================================ */
 .product-detail-card {
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(12, 201, 28, 0.97);
   padding: 35px;
   border-radius: 18px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -68,7 +68,7 @@
   display: flex;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid #b50f0f;
 }
 
 .info-row:last-child {

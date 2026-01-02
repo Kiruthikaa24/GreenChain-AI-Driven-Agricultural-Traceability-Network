@@ -5,7 +5,7 @@
 .retailer-dashboard {
   font-family: 'Poppins', sans-serif; 
   padding: 30px;
-  background: #f8f9fa; 
+  background: #90f073; 
   min-height: 100vh;
 }
 
@@ -150,7 +150,7 @@ p {
 .cart-section {
     max-width: 600px;
     margin: 0 auto;
-    background-color: #fff;
+    background-color: #18b5b0;
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -170,7 +170,7 @@ p {
 }
 
 .order-card {
-    background-color: #fff;
+    background-color: #5717b1;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
