@@ -1,58 +1,182 @@
 // src/services/aiService.js
 
-// Mock AI analysis - for development only
-export const mockAnalyzeImage = (file) => {
+/* ======================================================
+   CONFIG
+====================================================== */
+
+const API_KEY = process.env.REACT_APP_API_KEY;
+const IMAGE_ANALYSIS_MODEL = "gemini-2.5-flash"; // safer + cheaper
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${IMAGE_ANALYSIS_MODEL}:generateContent?key=${API_KEY}`;
+
+/* ======================================================
+   MOCK ANALYSIS (FALLBACK / DEV)
+====================================================== */
+
+export const mockAnalyzeImage = (file, product = "product") => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      // Simulate AI analysis based on file name or random factors
-      const fileName = file.name.toLowerCase();
-      
-      let quality, rating, consumable;
-      
-      // Simple mock logic based on file name
-      if (fileName.includes('fresh') || fileName.includes('good')) {
-        quality = "Excellent";
-        rating = 4.5;
+      const random = Math.random();
+
+      let overallQuality;
+      let freshnessStatus;
+      let consumable;
+
+      if (random > 0.7) {
+        overallQuality = "A";
+        freshnessStatus = "Fresh";
         consumable = true;
-      } else if (fileName.includes('ripe') || fileName.includes('average')) {
-        quality = "Good";
-        rating = 3.8;
+      } else if (random > 0.4) {
+        overallQuality = "B";
+        freshnessStatus = "Ripe";
         consumable = true;
-      } else if (fileName.includes('rotten') || fileName.includes('bad')) {
-        quality = "Poor";
-        rating = 2.0;
-        consumable = false;
       } else {
-        // Random analysis for other images
-        const random = Math.random();
-        if (random > 0.7) {
-          quality = "Excellent";
-          rating = (4 + Math.random()).toFixed(1);
-          consumable = true;
-        } else if (random > 0.4) {
-          quality = "Good";
-          rating = (3 + Math.random()).toFixed(1);
-          consumable = true;
-        } else {
-          quality = "Poor";
-          rating = (1 + Math.random()).toFixed(1);
-          consumable = false;
-        }
+        overallQuality = "D";
+        freshnessStatus = "Stale";
+        consumable = false;
       }
-      
+
       resolve({
-        quality,
-        rating: parseFloat(rating),
-        consumable,
-        analysis: `This product appears to be in ${quality.toLowerCase()} condition.`,
-        confidence: (80 + Math.random() * 20).toFixed(1)
+        productName: product,
+        freshnessStatus,
+        overallQuality,
+        confidence: Math.floor(80 + Math.random() * 20),
+        justification: `Mock analysis indicates ${freshnessStatus.toLowerCase()} condition.`,
+        consumable
       });
-    }, 2000);
+    }, 1200);
   });
 };
 
-// Real AI integration would go here
-export const analyzeImageWithAI = async (file) => {
-  // For now, we'll use the mock version
-  return await mockAnalyzeImage(file);
+/* ======================================================
+   FILE → BASE64
+====================================================== */
+
+export const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      const base64 = reader.result.split(",")[1];
+      resolve(base64);
+    };
+
+    reader.onerror = reject;
+  });
+};
+
+/* ======================================================
+   FETCH WITH RETRY
+====================================================== */
+
+async function fetchWithRetry(url, options, maxRetries = 5) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      if (response.status !== 429) return response;
+
+      const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+      await new Promise((r) => setTimeout(r, delay));
+    } catch {
+      const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw new Error("Gemini API failed after retries");
+}
+
+/* ======================================================
+   GEMINI IMAGE ANALYSIS
+====================================================== */
+
+export const analyzeImageWithGemini = async (
+  product,
+  base64Data,
+  mimeType
+) => {
+  if (!API_KEY) {
+    throw new Error("Missing REACT_APP_API_KEY");
+  }
+
+  const prompt = `
+Analyze the provided image of a ${product}.
+
+Respond ONLY with valid JSON.
+Set "productName" exactly to "${product}".
+
+Schema:
+{
+  "productName": string,
+  "freshnessStatus": string,
+  "overallQuality": string,
+  "confidence": number (0.5–1.0),
+  "justification": string
+}
+`;
+
+  const payload = {
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { text: prompt },
+          {
+            inlineData: {
+              mimeType,
+              data: base64Data
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+  const response = await fetchWithRetry(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Gemini error ${response.status}: ${err}`);
+  }
+
+  const data = await response.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!text) {
+    throw new Error("Empty Gemini response");
+  }
+
+  // 🔥 Extract JSON safely
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error("Gemini returned non-JSON output");
+  }
+
+  const parsed = JSON.parse(jsonMatch[0]);
+
+  return {
+    ...parsed,
+    confidence: Math.round(parsed.confidence * 100)
+  };
+};
+
+/* ======================================================
+   MAIN ENTRY FUNCTION (USED BY UI)
+====================================================== */
+
+export const analyzeImageWithAI = async (product, file) => {
+  try {
+    const base64Data = await fileToBase64(file);
+    return await analyzeImageWithGemini(
+      product,
+      base64Data,
+      file.type
+    );
+  } catch (error) {
+    console.error("AI analysis failed, using mock:", error.message);
+    return await mockAnalyzeImage(file, product);
+  }
 };

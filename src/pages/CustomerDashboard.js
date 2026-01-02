@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { fileToBase64, analyzeImageWithGemini } from "../api/geminiApi.js"; 
+import { analyzeImageWithAI } from "../services/aiService.js";
 import "../styles/customer.css"; 
 
 // --- MOCK NAVIGATION & AUTH ---
@@ -183,8 +183,7 @@ const CustomerDashboard = () => {
     setAnalysisResult(null);
 
     try {
-      const base64Image = await fileToBase64(selectedFile);
-      const result = await analyzeImageWithGemini(selectedCrop, base64Image);
+      const result = await analyzeImageWithAI(selectedCrop, selectedFile);
       setAnalysisResult(result);
       setNotification({ message: "AI analysis complete.", type: 'success' });
 

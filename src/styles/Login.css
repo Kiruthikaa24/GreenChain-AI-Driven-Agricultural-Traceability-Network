@@ -2,13 +2,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); 
 
 /* --- Universal Styles & Background FIX --- */
-html, body {
+ /*html, body {
   /* 1. Set full height and move gradient background here */
-  background: linear-gradient(135deg, #1a0b2e, #1f1f3d); 
+  /* background: linear-gradient(135deg, #29ce0b, #75994c); 
   height: 100%;
   margin: 0;
   padding: 0;
+} */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  background-image: url("https://thumbs.dreamstime.com/b/soybean-farm-agricultural-field-view-sky-green-agriculture-background-rows-soy-plants-under-sunlight-cultivated-growing-384811411.jpg");
+  background-size: cover;        /* fills entire screen */
+  background-position: center;   /* center image */
+  background-repeat: no-repeat;  /* no tiling */
+  background-attachment: fixed;  /* smooth scroll effect */
 }
+
 
 .auth-wrapper {
   font-family: 'Poppins', sans-serif;
@@ -34,10 +47,22 @@ html, body {
   z-index: 0;
 }
 
+.auth-background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45); /* dark overlay */
+  z-index: 0;
+}
+
+
 .floating-element {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(127, 0, 255, 0.6), rgba(0, 255, 255, 0.4));
+  background: radial-gradient(circle, rgba(0, 255, 0, 0.6), rgba(136, 255, 0, 0.4));
   filter: blur(80px);
   animation: float 20s infinite ease-in-out;
 }

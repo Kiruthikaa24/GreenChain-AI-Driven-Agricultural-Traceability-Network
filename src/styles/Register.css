@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); 
 
 /* --- Universal Styles & Background --- */
-.auth-wrapper {
+ /*.auth-wrapper {
   font-family: 'Poppins', sans-serif;
   display: flex;
   justify-content: center;
@@ -13,7 +13,27 @@
   background: linear-gradient(135deg, #1a0b2e, #1f1f3d);
   position: relative;
   padding: 0;
+} */
+
+.auth-wrapper {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+
+  /* ✅ Farm image background */
+  background-image: url("https://thumbs.dreamstime.com/b/soybean-farm-agricultural-field-view-sky-green-agriculture-background-rows-soy-plants-under-sunlight-cultivated-growing-384811411.jpg");
+  background-size: cover;        /* cover entire area */
+  background-position: center;   /* center the image */
+  background-repeat: no-repeat;  /* avoid tiling */
+  background-attachment: fixed;  /* optional: fixed background scroll */
 }
+
 
 .auth-background {
   position: absolute;
