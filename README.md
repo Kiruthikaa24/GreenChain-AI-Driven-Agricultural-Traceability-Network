@@ -40,12 +40,7 @@ AI-Driven Agricultural Traceability Network
 ### Consumer Module
 - Trace the origin of purchased produce  
 - Access crop history and AI-generated quality reports  
-- Rate and review products  
-
-### Admin Module
-- Manage users (farmers, distributors, consumers)  
-- Monitor transactions and traceability reports  
-- Generate analytics dashboards  
+- Rate and review products   
 
 ---
 
